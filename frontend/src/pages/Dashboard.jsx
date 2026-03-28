@@ -113,7 +113,7 @@ export default function Dashboard() {
               { icon: CheckCircle,  color: '#f59e0b', label: 'Compliance Check',          desc: 'Review existing content for issues',    path: '/pipeline' },
               { icon: Globe,        color: '#10b981', label: 'Localize Content',          desc: 'Translate to Kannada & Hindi',          path: '/pipeline' },
               { icon: Send,         color: '#ec4899', label: 'Distribution Formats',      desc: 'Format for all platforms',              path: '/pipeline' },
-              { icon: BarChart2,    color: '#f97316', label: 'Analytics Dashboard',       desc: 'View engagement insights',              path: '/analytics' },
+              { icon: BarChart2,    color: '#f97316', label: 'Analytics Dashboard',       desc: 'View engagement insights',              path: '/pipeline' },
             ].map(({ icon: Icon, color, label, desc, path }) => (
               <div key={label} className="glass" style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', transition: 'var(--transition)' }}
                 onClick={() => navigate(path)}

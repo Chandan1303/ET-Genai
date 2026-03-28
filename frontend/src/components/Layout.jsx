@@ -6,10 +6,9 @@ import FloatingChat from './FloatingChat';
 import Logo from './Logo';
 
 const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard'  },
-  { to: '/pipeline',  icon: GitBranch,       label: 'Pipeline'   },
-  { to: '/analytics', icon: BarChart2,       label: 'Analytics'  },
-  { to: '/tools',     icon: Wrench,          label: 'AI Tools'   },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/pipeline',  icon: GitBranch,       label: 'Pipeline'  },
+  { to: '/tools',     icon: Wrench,          label: 'AI Tools'  },
 ];
 
 export default function Layout({ children }) {

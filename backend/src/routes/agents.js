@@ -44,8 +44,15 @@ Important Points:
     });
     res.json({ sessionId, result, rawText: text.slice(0, 300) });
   } catch (err) {
-    console.error(err);
-    res.status(502).json({ error: 'Input agent failed. Please try again.' });
+    console.error('Input agent error:', err.message);
+    const msg = err.message?.includes('401') || err.message?.includes('403')
+      ? 'Invalid API key. Check your HF_API_KEY in .env'
+      : err.message?.includes('429')
+      ? 'Rate limit reached. Please wait a moment and try again.'
+      : err.message?.includes('503')
+      ? 'AI model is loading. Please try again in 20 seconds.'
+      : 'Input agent failed. Please try again.';
+    res.status(502).json({ error: msg });
   }
 });
 
@@ -182,27 +189,30 @@ router.post('/localize', async (req, res) => {
   if (!content?.trim()) return res.status(400).json({ error: 'content is required' });
 
   const langList = Array.isArray(languages) ? languages : ['Kannada', 'Hindi'];
-  const outputSections = langList.map(lang => `${lang} Version:\n[Full ${lang} translation here]`).join('\n\n');
+  // Trim content more aggressively when multiple languages are selected to stay within token budget
+  const maxContentLen = langList.length > 2 ? 600 : langList.length === 2 ? 900 : 1500;
+  const outputSections = langList.map(lang => `${lang} Version:\n[Write the complete ${lang} translation here — do not skip or truncate]`).join('\n\n');
 
-  const prompt = `You are a Localization Agent. Translate and culturally adapt the following content into the requested languages.
+  const prompt = `You are a Localization Agent. You MUST translate the content into ALL ${langList.length} language(s) listed below. Do not stop after the first language.
 
 Content:
-${content.slice(0, 1500)}
+${content.slice(0, maxContentLen)}
 
-Target Languages: ${langList.join(', ')}
+Target Languages (translate into EVERY one): ${langList.join(', ')}
 
 Instructions:
+- Translate into EACH language separately — all ${langList.length} version(s) are required
 - Do NOT do word-to-word translation
 - Maintain cultural relevance for each language/region
 - Keep tone natural and fluent
 - Preserve the original meaning
 
-Output EXACTLY in this format (include ONLY the requested languages):
+Output EXACTLY in this format — include ALL ${langList.length} language section(s):
 
 ${outputSections}`;
 
   try {
-    const result = await callMistral(prompt);
+    const result = await callMistralLong(prompt);
     if (sessionId && store.agentSessions) {
       const session = store.agentSessions.find(s => s.id === sessionId && s.userId === req.userId);
       if (session) { session.localizationResult = result; session.stage = 'localization'; }

@@ -7,7 +7,6 @@ import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Pipeline from "./pages/Pipeline";
-import Analytics from "./pages/Analytics";
 import Tools from "./pages/Tools";
 
 function PrivateRoute({ children }) {
@@ -30,7 +29,6 @@ function AppRoutes() {
 
       <Route path="/dashboard" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
       <Route path="/pipeline"  element={<PrivateRoute><Layout><Pipeline /></Layout></PrivateRoute>} />
-      <Route path="/analytics" element={<PrivateRoute><Layout><Analytics /></Layout></PrivateRoute>} />
       <Route path="/tools"     element={<PrivateRoute><Layout><Tools /></Layout></PrivateRoute>} />
 
       <Route path="*" element={<Navigate to="/" />} />
